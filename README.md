@@ -5,10 +5,38 @@
 This project, "Student Enrollment Management," was developed as part of the coursework for the subject "Introduction to Databases." The primary goal is to store and manage data about students enrolled in various exams at our institution. The project employs Java for the application logic and PostgreSQL for the database management, using Eclipse as the development environment and pgAdmin4 for database administration.
 
 ## Entity-Relationship (ER) Diagram
+![ER Diagram](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/bc584b63-5ebb-4e36-bef5-b91e9a0104e8)
 
-![image](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/4a22d07a-f4cc-4197-81d3-cfcb21b8d2b2)
+## Restructured version of Conceptual Schema
+![Restructuring Concteptual Schema](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/e1bf7da3-b567-4c35-abfe-935548742e6c)
+
 
 ## Textual Specification
+We want to store data about students enrolled in our institution for certain 
+exams. For each student, we want to remember their StudentID,first name, 
+last name, date of birth, email (optional), and their level of study 
+(Bachelor's, Master's, or PhD). Some students might also be employed, and 
+for these students, we want to store information about their work.
+• Each student can take multiple exams. For each exam a student takes, we 
+want to record the ExamID and date of the exam. The exam is associated 
+with a specific subject and organized by a professor. The exam is also held in 
+a specific classroom.
+• For each exam, we want to know the subject it covers. Each subject has a 
+unique SubjectID and name and is taught by a professor. We also need to 
+manage classroom information, such as its ClassroomID, room number, 
+building, and capacity.
+• We also need to keep track of the professors who organize and teach 
+various subjects. For each professor, we want to remember their 
+ProfessorID, first name, last name, email and phoneNumbers. For 
+UniversityProfessors we want to store the Department (e.g Computer 
+Science…) and for ExternalProfessor we want to store their Affiliation (e.g 
+ABC Institute…). Professors can also mentor students, and we want to keep 
+track of these mentorship relationships.
+• Additionally, we want to manage the information about classrooms. Each 
+classroom can host multiple subjects, and we want to record which subjects 
+are taught in each classroom.
+• Professors can mentor students, providing guidance and support.
+
 
 ### Student Information
 
@@ -55,16 +83,8 @@ Professors are associated with specific subjects and can organize exams. Additio
 
 ## External Constraints
 
-### Classroom Capacity Constraint
-
 The number of students taking an exam in a specific classroom should not exceed the classroom's capacity.
-
-### Unique Exam Schedule Constraint
-
 No two exams should be scheduled in the same classroom at the same time.
-
-### Professor's Subject Specialization
-
 A professor can only organize or teach exams for subjects they are specialized in.
 
 ## Technologies Used
