@@ -14,26 +14,23 @@ public class ProfessorEntity {
     public ProfessorEntity(Connection connection) {
         this.connection = connection;
     }
-    //Method for adding professor after INSERT button is pressed
-    public void addProfessor(int professorId, String firstName, String lastName, String email, String subject, String phoneNumbers) throws SQLException {
-        String sql = "INSERT INTO Professor (professorId, FirstName, LastName, Email, Subject, PhoneNumbers) VALUES (?, ?, ?, ?, ?, ?)";
+
+    // Method for adding professor after INSERT button is pressed
+    public void addProfessor(int professorId, String firstName, String lastName, String email, String phoneNumbers, String department, String affiliation) throws SQLException {
+        String sql = "INSERT INTO Professor (professorId, firstName, lastName, email, phoneNumbers, department, affiliation) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement professorInfo = connection.prepareStatement(sql)) {
             professorInfo.setInt(1, professorId);
             professorInfo.setString(2, firstName);
             professorInfo.setString(3, lastName);
             professorInfo.setString(4, email);
-            professorInfo.setString(5, subject);
-
-            if (phoneNumbers == null || phoneNumbers.trim().isEmpty()) {
-                professorInfo.setNull(6, java.sql.Types.VARCHAR);
-            } else {
-                professorInfo.setString(6, phoneNumbers);
-            }
-
+            professorInfo.setString(5, phoneNumbers);
+            professorInfo.setString(6, department);
+            professorInfo.setString(7, affiliation);
             professorInfo.executeUpdate();
         }
     }
-    //Method for deleting professor after DELETE button is pressed
+
+    // Method for deleting professor after DELETE button is pressed
     public void deleteProfessor(int professorId) throws SQLException {
         String sql = "DELETE FROM Professor WHERE professorId = ?";
         try (PreparedStatement professorInfo = connection.prepareStatement(sql)) {
@@ -54,8 +51,9 @@ public class ProfessorEntity {
                         rs.getString("firstName"),
                         rs.getString("lastName"),
                         rs.getString("email"),
-                        rs.getString("subject"),
-                        rs.getString("phoneNumbers")
+                        rs.getString("phoneNumbers"),
+                        rs.getString("department"),
+                        rs.getString("affiliation")
                 );
                 professors.add(professor);
             }
@@ -68,16 +66,18 @@ public class ProfessorEntity {
         private final String firstName;
         private final String lastName;
         private final String email;
-        private final String subject;
         private final String phoneNumbers;
+        private final String department;
+        private final String affiliation;
 
-        public Professor(int professorId, String firstName, String lastName, String email, String subject, String phoneNumbers) {
+        public Professor(int professorId, String firstName, String lastName, String email, String phoneNumbers, String department, String affiliation) {
             this.professorId = professorId;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
-            this.subject = subject;
             this.phoneNumbers = phoneNumbers;
+            this.department = department;
+            this.affiliation = affiliation;
         }
 
         public int getProfessorId() {
@@ -96,12 +96,16 @@ public class ProfessorEntity {
             return email;
         }
 
-        public String getSubject() {
-            return subject;
-        }
-
         public String getPhoneNumbers() {
             return phoneNumbers;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public String getAffiliation() {
+            return affiliation;
         }
     }
 }
