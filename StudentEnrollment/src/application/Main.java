@@ -468,7 +468,7 @@ public class Main extends Application {
             capacityInput.clear();
         });
 
-        // Delete Button
+     // Delete Button
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> {
             Person selectedPerson = combinedTableView.getSelectionModel().getSelectedItem();
@@ -480,24 +480,102 @@ public class Main extends Application {
                     int subjectId = selectedPerson.getSubjectId();
                     int classroomId = selectedPerson.getClassroomId();
 
+                    // Log deletion steps
+                    System.out.println("Delete relationships and main entities for selected person.");
+
                     // Delete relationships first
-                    takesRelationship.deleteTakes(studentId, examId);
-                    coversRelationship.deleteCovers(examId, subjectId);
-                    heldInRelationship.deleteHeldIn(examId, classroomId);
-                    hostsRelationship.deleteHosts(classroomId, subjectId);
-                    taughtByRelationship.deleteTaughtBy(subjectId, professorId);
-                    mentorsRelationship.deleteMentors(professorId, studentId);
+                    try {
+                        takesRelationship.deleteTakes(studentId, examId);
+                        System.out.println("Deleted from Takes relationship.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete from Takes relationship.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        coversRelationship.deleteCovers(examId, subjectId);
+                        System.out.println("Deleted from Covers relationship.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete from Covers relationship.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        heldInRelationship.deleteHeldIn(examId, classroomId);
+                        System.out.println("Deleted from HeldIn relationship.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete from HeldIn relationship.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        hostsRelationship.deleteHosts(classroomId, subjectId);
+                        System.out.println("Deleted from Hosts relationship.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete from Hosts relationship.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        taughtByRelationship.deleteTaughtBy(subjectId, professorId);
+                        System.out.println("Deleted from TaughtBy relationship.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete from TaughtBy relationship.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        mentorsRelationship.deleteMentors(professorId, studentId);
+                        System.out.println("Deleted from Mentors relationship.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete from Mentors relationship.");
+                        ex.printStackTrace();
+                    }
 
                     // Delete main entities
-                    studentEntity.deleteStudent(studentId);
-                    professorEntity.deleteProfessor(professorId);
-                    examEntity.deleteExam(examId);
-                    subjectEntity.deleteSubject(subjectId);
-                    classroomEntity.deleteClassroom(classroomId);
+                    try {
+                        studentEntity.deleteStudent(studentId);
+                        System.out.println("Deleted student.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete student.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        professorEntity.deleteProfessor(professorId);
+                        System.out.println("Deleted professor.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete professor.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        examEntity.deleteExam(examId);
+                        System.out.println("Deleted exam.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete exam.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        subjectEntity.deleteSubject(subjectId);
+                        System.out.println("Deleted subject.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete subject.");
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        classroomEntity.deleteClassroom(classroomId);
+                        System.out.println("Deleted classroom.");
+                    } catch (SQLException ex) {
+                        System.err.println("Failed to delete classroom.");
+                        ex.printStackTrace();
+                    }
 
                     combinedList.remove(selectedPerson);
-                    System.out.println("Enrollment deleted successfully");
-                } catch (SQLException ex) {
+                    System.out.println("Enrollment deleted successfully.");
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while deleting the student, professor, exam, subject, and classroom.");
                 }
@@ -505,6 +583,7 @@ public class Main extends Application {
                 showAlert(Alert.AlertType.ERROR, "Error", "No enrollment selected.");
             }
         });
+
 
         // Load existing data from the database
         try {
