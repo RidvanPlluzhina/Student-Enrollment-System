@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.IntegerProperty;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -24,6 +25,13 @@ public class Main extends Application {
     private ProfessorEntity professorEntity;
     private ExamEntity examEntity;
     private SubjectEntity subjectEntity;
+    private ClassroomEntity classroomEntity;
+    private TakesRelationship takesRelationship;
+    private CoversRelationship coversRelationship;
+    private HeldInRelationship heldInRelationship;
+    private HostsRelationship hostsRelationship;
+    private TaughtByRelationship taughtByRelationship;
+    private MentorsRelationship mentorsRelationship;
     private ObservableList<Person> combinedList;
     private TableView<Person> combinedTableView;
 
@@ -38,6 +46,13 @@ public class Main extends Application {
             professorEntity = new ProfessorEntity(connection);
             examEntity = new ExamEntity(connection);
             subjectEntity = new SubjectEntity(connection);
+            classroomEntity = new ClassroomEntity(connection);
+            takesRelationship = new TakesRelationship(connection);  
+            coversRelationship = new CoversRelationship(connection); 
+            heldInRelationship = new HeldInRelationship(connection); 
+            hostsRelationship = new HostsRelationship(connection);   
+            taughtByRelationship = new TaughtByRelationship(connection); 
+            mentorsRelationship = new MentorsRelationship(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -208,6 +223,45 @@ public class Main extends Application {
         // Add components to exam grid
         examGrid.getChildren().addAll(examHeaderLabel, examIdLabel, examIdInput, examDateLabel, examDateInput);
 
+        // CREATE UI COMPONENTS FOR CLASSROOMS
+        GridPane classroomGrid = new GridPane();
+        classroomGrid.setPadding(new Insets(10, 10, 10, 10));
+        classroomGrid.setVgap(5);
+        classroomGrid.setHgap(10);
+
+        Label classroomHeaderLabel = new Label("Add Classroom Data");
+        classroomHeaderLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+        GridPane.setConstraints(classroomHeaderLabel, 0, 0, 2, 1);
+
+        // Classroom ID
+        Label classroomIdLabel = new Label("*Classroom ID:");
+        GridPane.setConstraints(classroomIdLabel, 0, 1);
+        TextField classroomIdInput = new TextField();
+        GridPane.setConstraints(classroomIdInput, 1, 1);
+
+        // Room Number
+        Label roomNrLabel = new Label("*Room Number:");
+        GridPane.setConstraints(roomNrLabel, 0, 2);
+        ComboBox<String> roomNumberComboBox = new ComboBox<>();
+        roomNumberComboBox.setItems(FXCollections.observableArrayList("01", "02", "03","04","05","06","07","08","09","10"));
+        GridPane.setConstraints(roomNumberComboBox, 1, 2);
+
+        // Building
+        Label buildingLabel = new Label("*Building:");
+        GridPane.setConstraints(buildingLabel, 0, 3);
+        ComboBox<String> buildingComboBox = new ComboBox<>();
+        buildingComboBox.setItems(FXCollections.observableArrayList("A", "B", "C","D","E","F"));
+        GridPane.setConstraints(buildingComboBox, 1, 3);
+
+        // Capacity
+        Label capacityLabel = new Label("*Capacity:");
+        GridPane.setConstraints(capacityLabel, 0, 4);
+        TextField capacityInput = new TextField();
+        GridPane.setConstraints(capacityInput, 1, 4);
+
+        // Add components to classroom grid
+        classroomGrid.getChildren().addAll(classroomHeaderLabel, classroomIdLabel, classroomIdInput, roomNrLabel, roomNumberComboBox, buildingLabel, buildingComboBox, capacityLabel, capacityInput);
+
         // Create Tabs
         Tab studentTab = new Tab("Student", studentGrid);
         studentTab.setClosable(false); // Remove the close button
@@ -220,12 +274,14 @@ public class Main extends Application {
         
         Tab subjectTab = new Tab("Subject", subjectGrid);
         subjectTab.setClosable(false); // Remove the close button
+        
+        Tab classroomTab = new Tab("Classroom", classroomGrid);
+        classroomTab.setClosable(false); // Remove the close button
 
-      
-
-        tabPane.getTabs().addAll(studentTab, professorTab, examTab, subjectTab);
+        tabPane.getTabs().addAll(studentTab, professorTab, examTab, subjectTab, classroomTab);
 
         // Single Insert Button
+     // Single Insert Button
         Button insertButton = new Button("Insert");
         insertButton.setOnAction(e -> {
             // Validate student fields
@@ -258,6 +314,14 @@ public class Main extends Application {
             int subjectId = subjectIdText.isEmpty() ? 0 : Integer.parseInt(subjectIdText);
             String subjectName = subjectNameInput.getText();
 
+            // Validate classroom fields
+            String classroomIdText = classroomIdInput.getText();
+            int classroomId = classroomIdText.isEmpty() ? 0 : Integer.parseInt(classroomIdText);
+            String roomNr = roomNumberComboBox.getValue();
+            String building = buildingComboBox.getValue();
+            String capacityText = capacityInput.getText();
+            int capacity = capacityText.isEmpty() ? 0 : Integer.parseInt(capacityText);
+
             if (firstName.trim().isEmpty() || lastName.trim().isEmpty() || dateOfBirth.trim().isEmpty() || level == null || studentId == 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Complete required student fields.");
                 return;
@@ -278,43 +342,130 @@ public class Main extends Application {
                 return;
             }
 
+            if (roomNr.trim().isEmpty() || building.trim().isEmpty() || classroomId == 0 || capacity == 0) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Complete required classroom fields.");
+                return;
+            }
+
             try {
                 studentEntity.addStudent(studentId, firstName, lastName, dateOfBirth, level, email, work);
-                professorEntity.addProfessor(professorId, professorFirstName, professorLastName, professorEmail, department, affiliation, phoneNumbers);
-                examEntity.addExam(examId, examDate);
-                subjectEntity.addSubject(subjectId, subjectName);
-
-                Person person = new Person(studentId, professorId, level, firstName + " " + lastName, professorFirstName + " " + professorLastName, department, affiliation, examId, examDate, subjectId, subjectName);
-                combinedList.add(person);
-                System.out.println("Enrollment added successfully");
-
-                // Clear input fields
-                studentIdInput.clear();
-                firstNameInput.clear();
-                lastNameInput.clear();
-                dobInput.clear();
-                levelComboBox.setValue(null);
-                emailInput.clear();
-                workInput.clear();
-
-                professorIdInput.clear();
-                professorFirstNameInput.clear();
-                professorLastNameInput.clear();
-                professorEmailInput.clear();
-                departmentInput.clear();
-                affiliationInput.clear();
-                phoneNumbersInput.clear();
-
-                examIdInput.clear();
-                examDateInput.clear();
-
-                subjectIdInput.clear();
-                subjectNameInput.clear();
-
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding the student, professor, exam, and subject.");
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding student, check again the Primary Keys or other constraints");
+                return; // Stop further execution if student insertion fails
             }
+
+            try {
+                professorEntity.addProfessor(professorId, professorFirstName, professorLastName, professorEmail, department, affiliation, phoneNumbers);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding professor, check again the Primary Keys or other constraints");
+                return; // Stop further execution if professor insertion fails
+            }
+
+            try {
+                examEntity.addExam(examId, examDate);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding exam, check again the Primary Keys or other constraints");
+                return; // Stop further execution if exam insertion fails
+            }
+
+            try {
+                subjectEntity.addSubject(subjectId, subjectName);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding subject, check again the Primary Keys or other constraints");
+                return; // Stop further execution if subject insertion fails
+            }
+
+            try {
+                classroomEntity.addClassroom(classroomId, roomNr, building, capacity);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding classroom, check again the Primary Keys or other constraints");
+                return; // Stop further execution if classroom insertion fails
+            }
+
+            try {
+                takesRelationship.addTakes(studentId, examId);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding takes relationship, check again the Primary Keys or other constraints");
+                return; // Stop further execution if takes insertion fails
+            }
+
+            try {
+                coversRelationship.addCovers(examId, subjectId);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding covers relationship, check again the Primary Keys or other constraints");
+                return; // Stop further execution if covers insertion fails
+            }
+
+            try {
+                heldInRelationship.addHeldIn(examId, classroomId);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding heldIn relationship, check again the Primary Keys or other constraints");
+                return; // Stop further execution if heldIn insertion fails
+            }
+
+            try {
+                hostsRelationship.addHosts(classroomId, subjectId);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding hosts relationship, check again the Primary Keys or other constraints");
+                return; // Stop further execution if hosts insertion fails
+            }
+
+            try {
+                taughtByRelationship.addTaughtBy(subjectId, professorId);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding taughtBy relationship, check again the Primary Keys or other constraints");
+                return; // Stop further execution if taughtBy insertion fails
+            }
+
+            try {
+                mentorsRelationship.addMentors(professorId, studentId);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while adding mentors relationship, check again the Primary Keys or other constraints");
+                return; // Stop further execution if mentors insertion fails
+            }
+
+            Person person = new Person(studentId, professorId, level, firstName + " " + lastName, professorFirstName + " " + professorLastName, department, affiliation, examId, examDate, subjectId, subjectName, classroomId, roomNr, building, capacity);
+            combinedList.add(person);
+            System.out.println("Enrollment added successfully");
+
+            // Clear input fields
+            studentIdInput.clear();
+            firstNameInput.clear();
+            lastNameInput.clear();
+            dobInput.clear();
+            levelComboBox.setValue(null);
+            emailInput.clear();
+            workInput.clear();
+
+            professorIdInput.clear();
+            professorFirstNameInput.clear();
+            professorLastNameInput.clear();
+            professorEmailInput.clear();
+            departmentInput.clear();
+            affiliationInput.clear();
+            phoneNumbersInput.clear();
+
+            examIdInput.clear();
+            examDateInput.clear();
+
+            subjectIdInput.clear();
+            subjectNameInput.clear();
+
+            classroomIdInput.clear();
+            roomNumberComboBox.setValue(null);
+            buildingComboBox.setValue(null);
+            capacityInput.clear();
         });
 
         // Delete Button
@@ -324,25 +475,34 @@ public class Main extends Application {
             if (selectedPerson != null) {
                 try {
                     int studentId = selectedPerson.getStudentId();
-                    studentEntity.deleteStudent(studentId);
-
                     int professorId = selectedPerson.getProfessorId();
-                    professorEntity.deleteProfessor(professorId);
-
                     int examId = selectedPerson.getExamId();
-                    examEntity.deleteExam(examId);
-
                     int subjectId = selectedPerson.getSubjectId();
+                    int classroomId = selectedPerson.getClassroomId();
+
+                    // Delete relationships first
+                    takesRelationship.deleteTakes(studentId, examId);
+                    coversRelationship.deleteCovers(examId, subjectId);
+                    heldInRelationship.deleteHeldIn(examId, classroomId);
+                    hostsRelationship.deleteHosts(classroomId, subjectId);
+                    taughtByRelationship.deleteTaughtBy(subjectId, professorId);
+                    mentorsRelationship.deleteMentors(professorId, studentId);
+
+                    // Delete main entities
+                    studentEntity.deleteStudent(studentId);
+                    professorEntity.deleteProfessor(professorId);
+                    examEntity.deleteExam(examId);
                     subjectEntity.deleteSubject(subjectId);
+                    classroomEntity.deleteClassroom(classroomId);
 
                     combinedList.remove(selectedPerson);
                     System.out.println("Enrollment deleted successfully");
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while deleting the student, professor, exam, and subject.");
+                    showAlert(Alert.AlertType.ERROR, "Database Error", "An error occurred while deleting the student, professor, exam, subject, and classroom.");
                 }
             } else {
-                showAlert(Alert.AlertType.ERROR, "Error", "No student selected.");
+                showAlert(Alert.AlertType.ERROR, "Error", "No enrollment selected.");
             }
         });
 
@@ -352,9 +512,10 @@ public class Main extends Application {
             List<ProfessorEntity.Professor> professors = professorEntity.getAllProfessors();
             List<ExamEntity.Exam> exams = examEntity.getAllExams();
             List<SubjectEntity.Subject> subjects = subjectEntity.getAllSubjects();
+            List<ClassroomEntity.Classroom> classrooms = classroomEntity.getAllClassrooms();
 
             for (StudentEntity.Student student : students) {
-                combinedList.add(new Person(student.getStudentId(), 0, student.getLevel(), student.getFirstName() + " " + student.getLastName(), "", "", "", 0, "", 0, ""));
+                combinedList.add(new Person(student.getStudentId(), 0, student.getLevel(), student.getFirstName() + " " + student.getLastName(), "", "", "", 0, "", 0, "", 0, "", "", 0));
             }
 
             for (ProfessorEntity.Professor professor : professors) {
@@ -388,11 +549,23 @@ public class Main extends Application {
                     }
                 }
             }
+
+            for (ClassroomEntity.Classroom classroom : classrooms) {
+                for (Person person : combinedList) {
+                    if (person.getClassroomId() == 0) {
+                        person.setClassroomId(classroom.getClassroomID());
+                        person.setRoomNr(classroom.getRoomNr());
+                        person.setBuilding(classroom.getBuilding());
+                        person.setCapacity(classroom.getCapacity());
+                        break;
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Table View for combined list of Students, Professors, Exams, and Subjects
+        // Table View for combined list of Students, Professors, Exams, Subjects, and Classrooms
         combinedTableView = new TableView<>(combinedList);
 
         TableColumn<Person, String> subjectColumn = new TableColumn<>("Subject");
@@ -413,7 +586,19 @@ public class Main extends Application {
         TableColumn<Person, String> nameColumn = new TableColumn<>("Student");
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
 
-        combinedTableView.getColumns().addAll(subjectColumn, examDateColumn, examIdColumn, professorColumn, studentIdColumn, nameColumn);
+        TableColumn<Person, Number> classroomIdColumn = new TableColumn<>("Classroom ID");
+        classroomIdColumn.setCellValueFactory(cellData -> cellData.getValue().classroomIdProperty());
+
+        TableColumn<Person, String> roomNrColumn = new TableColumn<>("Room Number");
+        roomNrColumn.setCellValueFactory(cellData -> cellData.getValue().roomNrProperty());
+
+        TableColumn<Person, String> buildingColumn = new TableColumn<>("Building");
+        buildingColumn.setCellValueFactory(cellData -> cellData.getValue().buildingProperty());
+
+        TableColumn<Person, Number> capacityColumn = new TableColumn<>("Capacity");
+        capacityColumn.setCellValueFactory(cellData -> cellData.getValue().capacityProperty());
+
+        combinedTableView.getColumns().addAll(subjectColumn, examDateColumn, examIdColumn, professorColumn, studentIdColumn, nameColumn, classroomIdColumn, roomNrColumn, buildingColumn, capacityColumn);
 
         VBox vbox = new VBox(10);
         vbox.getChildren().addAll(tabPane, insertButton, deleteButton, combinedTableView);
@@ -450,8 +635,12 @@ public class Main extends Application {
         private final StringProperty examDate;
         private final IntegerProperty subjectId;
         private final StringProperty subject;
+        private final IntegerProperty classroomId;
+        private final StringProperty roomNr;
+        private final StringProperty building;
+        private final IntegerProperty capacity;
 
-        public Person(int studentId, int professorId, String level, String name, String professor, String department, String affiliation, int examId, String examDate, int subjectId, String subject) {
+        public Person(int studentId, int professorId, String level, String name, String professor, String department, String affiliation, int examId, String examDate, int subjectId, String subject, int classroomId, String roomNr, String building, int capacity) {
             this.studentId = new SimpleIntegerProperty(studentId);
             this.professorId = new SimpleIntegerProperty(professorId);
             this.level = new SimpleStringProperty(level);
@@ -463,6 +652,10 @@ public class Main extends Application {
             this.examDate = new SimpleStringProperty(examDate);
             this.subjectId = new SimpleIntegerProperty(subjectId);
             this.subject = new SimpleStringProperty(subject);
+            this.classroomId = new SimpleIntegerProperty(classroomId);
+            this.roomNr = new SimpleStringProperty(roomNr);
+            this.building = new SimpleStringProperty(building);
+            this.capacity = new SimpleIntegerProperty(capacity);
         }
 
         public int getStudentId() {
@@ -591,6 +784,54 @@ public class Main extends Application {
 
         public StringProperty subjectProperty() {
             return subject;
+        }
+
+        public int getClassroomId() {
+            return classroomId.get();
+        }
+
+        public void setClassroomId(int classroomId) {
+            this.classroomId.set(classroomId);
+        }
+
+        public IntegerProperty classroomIdProperty() {
+            return classroomId;
+        }
+
+        public String getRoomNr() {
+            return roomNr.get();
+        }
+
+        public void setRoomNr(String roomNr) {
+            this.roomNr.set(roomNr);
+        }
+
+        public StringProperty roomNrProperty() {
+            return roomNr;
+        }
+
+        public String getBuilding() {
+            return building.get();
+        }
+
+        public void setBuilding(String building) {
+            this.building.set(building);
+        }
+
+        public StringProperty buildingProperty() {
+            return building;
+        }
+
+        public int getCapacity() {
+            return capacity.get();
+        }
+
+        public void setCapacity(int capacity) {
+            this.capacity.set(capacity);
+        }
+
+        public IntegerProperty capacityProperty() {
+            return capacity;
         }
     }
 }
