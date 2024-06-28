@@ -8,7 +8,7 @@ This project, "Student Enrollment Management," was developed as part of the cour
 ![ER Diagram](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/bc584b63-5ebb-4e36-bef5-b91e9a0104e8)
 
 ## Restructured version of Conceptual Schema
-![Restructuring Concteptual Schema](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/e1bf7da3-b567-4c35-abfe-935548742e6c)
+![Restructuring Concteptual Schema](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/37f9c8d7-82c1-4d62-af4b-11826f6680dc)
 
 
 ## Textual Specification
