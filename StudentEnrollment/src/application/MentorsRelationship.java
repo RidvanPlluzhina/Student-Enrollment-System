@@ -11,10 +11,12 @@ public class MentorsRelationship {
 
     private Connection connection;
 
+    // Initializes the MentorsRelationship with a database connection
     public MentorsRelationship(Connection connection) {
         this.connection = connection;
     }
 
+ // Adds a new Mentors relationship record to the database
     public void addMentors(int professorId, int studentId) throws SQLException {
         String sql = "INSERT INTO Mentors (professorid, studentid) VALUES (?, ?)";
         try (PreparedStatement mentorsInfo = connection.prepareStatement(sql)) {
@@ -24,6 +26,7 @@ public class MentorsRelationship {
         }
     }
 
+ // Deletes a Mentors relationship record from the database based on the professor ID and student ID
     public void deleteMentors(int professorId, int studentId) throws SQLException {
         String sql = "DELETE FROM Mentors WHERE professorid = ? AND studentid = ?";
         try (PreparedStatement mentorsInfo = connection.prepareStatement(sql)) {
@@ -33,6 +36,7 @@ public class MentorsRelationship {
         }
     }
 
+    // Retrieves all Mentors relationship records from the database
     public List<Mentors> getAllMentors() throws SQLException {
         List<Mentors> mentorsList = new ArrayList<>();
         String sql = "SELECT * FROM Mentors";
@@ -49,15 +53,17 @@ public class MentorsRelationship {
         return mentorsList;
     }
 
+ // Represents a Mentors relationship record
     public static class Mentors {
         private final int professorId;
         private final int studentId;
 
+        // Initializes the Mentors relationship with specified details
         public Mentors(int professorId, int studentId) {
             this.professorId = professorId;
             this.studentId = studentId;
         }
-
+        // Getters
         public int getProfessorId() {
             return professorId;
         }

@@ -21,17 +21,22 @@ import java.util.List;
 
 public class Main extends Application {
 
+	// Entity handlers - manage interactions with the database tables for each entity
     private StudentEntity studentEntity;
     private ProfessorEntity professorEntity;
     private ExamEntity examEntity;
     private SubjectEntity subjectEntity;
     private ClassroomEntity classroomEntity;
+    
+    // Relationship handlers - manage interactions with the database tables for each relationship
     private TakesRelationship takesRelationship;
     private CoversRelationship coversRelationship;
     private HeldInRelationship heldInRelationship;
     private HostsRelationship hostsRelationship;
     private TaughtByRelationship taughtByRelationship;
     private MentorsRelationship mentorsRelationship;
+    
+    // Observable list for storing combined data
     private ObservableList<Person> combinedList;
     private TableView<Person> combinedTableView;
 
@@ -40,8 +45,12 @@ public class Main extends Application {
         // Database Connection Java + postgresql
         Connection connection = null;
         try {
+            // Load PostgreSQL driver
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/StudentEnrollmentDB", "postgres", "admin");
+            // Establish connection to the database
+            connection = DriverManager.getConnection                       // username and password
+            		("jdbc:postgresql://localhost:5432/StudentEnrollmentDB", "postgres", "admin"); 
+            // Initialize entity and relationship handlers
             studentEntity = new StudentEntity(connection);
             professorEntity = new ProfessorEntity(connection);
             examEntity = new ExamEntity(connection);
@@ -56,18 +65,20 @@ public class Main extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        // Initialize combined list for table view
         combinedList = FXCollections.observableArrayList();
 
-        // Create TabPane
+        // Create TabPane for different entities
         TabPane tabPane = new TabPane();
 
+        // GridPane layout for organizing components in a grid structure
         // CREATE UI COMPONENTS FOR SUBJECTS
         GridPane subjectGrid = new GridPane();
         subjectGrid.setPadding(new Insets(10, 10, 10, 10));
         subjectGrid.setVgap(5);
         subjectGrid.setHgap(10);
 
+        // Header of subject input form
         Label subjectHeaderLabel = new Label("Add Subject Data");
         subjectHeaderLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         GridPane.setConstraints(subjectHeaderLabel, 0, 0, 2, 1);
@@ -93,6 +104,7 @@ public class Main extends Application {
         studentGrid.setVgap(5);
         studentGrid.setHgap(10);
 
+        // Header of student input form
         Label studentHeaderLabel = new Label("Add Student Data");
         studentHeaderLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         GridPane.setConstraints(studentHeaderLabel, 0, 0, 2, 1);
@@ -149,6 +161,7 @@ public class Main extends Application {
         professorGrid.setVgap(5);
         professorGrid.setHgap(10);
 
+        // Header of professor input form
         Label professorHeaderLabel = new Label("Add Professor Data");
         professorHeaderLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         GridPane.setConstraints(professorHeaderLabel, 0, 0, 2, 1);
@@ -204,6 +217,7 @@ public class Main extends Application {
         examGrid.setVgap(5);
         examGrid.setHgap(10);
 
+        // Header of exam input form
         Label examHeaderLabel = new Label("Add Exam Data");
         examHeaderLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         GridPane.setConstraints(examHeaderLabel, 0, 0, 2, 1);
@@ -229,6 +243,7 @@ public class Main extends Application {
         classroomGrid.setVgap(5);
         classroomGrid.setHgap(10);
 
+        // Header of classroom input form
         Label classroomHeaderLabel = new Label("Add Classroom Data");
         classroomHeaderLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         GridPane.setConstraints(classroomHeaderLabel, 0, 0, 2, 1);
@@ -281,9 +296,9 @@ public class Main extends Application {
         tabPane.getTabs().addAll(studentTab, professorTab, examTab, subjectTab, classroomTab);
 
         // Single Insert Button
-     // Single Insert Button
         Button insertButton = new Button("Insert");
         insertButton.setOnAction(e -> {
+        	
             // Validate student fields
             String studentIdText = studentIdInput.getText();
             int studentId = studentIdText.isEmpty() ? 0 : Integer.parseInt(studentIdText);
@@ -322,31 +337,37 @@ public class Main extends Application {
             String capacityText = capacityInput.getText();
             int capacity = capacityText.isEmpty() ? 0 : Integer.parseInt(capacityText);
 
+            // Check for empty or invalid student fields
             if (firstName.trim().isEmpty() || lastName.trim().isEmpty() || dateOfBirth.trim().isEmpty() || level == null || studentId == 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Complete required student fields.");
                 return;
             }
 
+            // Check for empty or invalid professor fields
             if (professorFirstName.trim().isEmpty() || professorLastName.trim().isEmpty() || professorId == 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Complete required professor fields.");
                 return;
             }
 
+            // Check for empty or invalid exam fields
             if (examDate.trim().isEmpty() || examId == 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Complete required exam fields.");
                 return;
             }
 
+            // Check for empty or invalid subject fields
             if (subjectName.trim().isEmpty() || subjectId == 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Complete required subject fields.");
                 return;
             }
-
+            
+            // Check for empty or invalid classroom fields
             if (roomNr.trim().isEmpty() || building.trim().isEmpty() || classroomId == 0 || capacity == 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Complete required classroom fields.");
                 return;
             }
 
+            // Insert entities into the database
             try {
                 studentEntity.addStudent(studentId, firstName, lastName, dateOfBirth, level, email, work);
             } catch (SQLException ex) {
@@ -387,6 +408,7 @@ public class Main extends Application {
                 return; // Stop further execution if classroom insertion fails
             }
 
+            // Insert relationships into the database
             try {
                 takesRelationship.addTakes(studentId, examId);
             } catch (SQLException ex) {
@@ -435,6 +457,7 @@ public class Main extends Application {
                 return; // Stop further execution if mentors insertion fails
             }
 
+            // Create and add a Person object to the combined list
             Person person = new Person(studentId, professorId, level, firstName + " " + lastName, professorFirstName + " " + professorLastName, department, affiliation, examId, examDate, subjectId, subjectName, classroomId, roomNr, building, capacity);
             combinedList.add(person);
             System.out.println("Enrollment added successfully");
@@ -471,6 +494,7 @@ public class Main extends Application {
      // Delete Button
         Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> {
+        	// Get selected Person from the table view
             Person selectedPerson = combinedTableView.getSelectionModel().getSelectedItem();
             if (selectedPerson != null) {
                 try {
@@ -593,10 +617,12 @@ public class Main extends Application {
             List<SubjectEntity.Subject> subjects = subjectEntity.getAllSubjects();
             List<ClassroomEntity.Classroom> classrooms = classroomEntity.getAllClassrooms();
 
+            // Add existing students to combined list
             for (StudentEntity.Student student : students) {
                 combinedList.add(new Person(student.getStudentId(), 0, student.getLevel(), student.getFirstName() + " " + student.getLastName(), "", "", "", 0, "", 0, "", 0, "", "", 0));
             }
 
+            // Add existing professors to combined list
             for (ProfessorEntity.Professor professor : professors) {
                 for (Person person : combinedList) {
                     if (person.getProfessor().isEmpty()) {
@@ -609,6 +635,7 @@ public class Main extends Application {
                 }
             }
 
+            // Add existing exams to combined list
             for (ExamEntity.Exam exam : exams) {
                 for (Person person : combinedList) {
                     if (person.getExamId() == 0) {
@@ -618,7 +645,7 @@ public class Main extends Application {
                     }
                 }
             }
-
+            // Add existing subjects to combined list
             for (SubjectEntity.Subject subject : subjects) {
                 for (Person person : combinedList) {
                     if (person.getSubject().isEmpty()) {
@@ -628,7 +655,7 @@ public class Main extends Application {
                     }
                 }
             }
-
+            // Add existing classrooms to combined list
             for (ClassroomEntity.Classroom classroom : classrooms) {
                 for (Person person : combinedList) {
                     if (person.getClassroomId() == 0) {
@@ -647,6 +674,7 @@ public class Main extends Application {
         // Table View for combined list of Students, Professors, Exams, Subjects, and Classrooms
         combinedTableView = new TableView<>(combinedList);
 
+        // Define columns for the table view
         TableColumn<Person, String> subjectColumn = new TableColumn<>("Subject");
         subjectColumn.setCellValueFactory(cellData -> cellData.getValue().subjectProperty());
 
@@ -690,6 +718,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    // Utility method to show alert dialogs
     private void showAlert(Alert.AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

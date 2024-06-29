@@ -11,10 +11,12 @@ public class TaughtByRelationship {
 
     private Connection connection;
 
+ // Constructor that initializes the connection object
     public TaughtByRelationship(Connection connection) {
         this.connection = connection;
     }
 
+ // Method to add a relationship between a subject and a professor in the TaughtBy table
     public void addTaughtBy(int subjectId, int professorId) throws SQLException {
         String sql = "INSERT INTO TaughtBy (subjectid, professorid) VALUES (?, ?)";
         try (PreparedStatement taughtByInfo = connection.prepareStatement(sql)) {
@@ -24,6 +26,7 @@ public class TaughtByRelationship {
         }
     }
 
+    // Method to delete a relationship between a subject and a professor from the TaughtBy table
     public void deleteTaughtBy(int subjectId, int professorId) throws SQLException {
         String sql = "DELETE FROM TaughtBy WHERE subjectid = ? AND professorid = ?";
         try (PreparedStatement taughtByInfo = connection.prepareStatement(sql)) {
@@ -32,7 +35,8 @@ public class TaughtByRelationship {
             taughtByInfo.executeUpdate();
         }
     }
-
+    
+ // Method to retrieve all relationships from the TaughtBy table
     public List<TaughtBy> getAllTaughtBy() throws SQLException {
         List<TaughtBy> taughtByList = new ArrayList<>();
         String sql = "SELECT * FROM TaughtBy";
@@ -49,6 +53,7 @@ public class TaughtByRelationship {
         return taughtByList;
     }
 
+ // Inner class to represent a TaughtBy relationship (subject-professor pair)
     public static class TaughtBy {
         private final int subjectId;
         private final int professorId;

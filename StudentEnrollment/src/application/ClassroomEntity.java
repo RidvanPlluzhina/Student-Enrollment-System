@@ -11,10 +11,12 @@ public class ClassroomEntity {
 
     private Connection connection;
 
+    // Initializes the ClassroomEntity with a database connection
     public ClassroomEntity(Connection connection) {
         this.connection = connection;
     }
-
+    
+    // Adds a new classroom record to the database
     public void addClassroom(int classroomID, String roomNr, String building, int capacity) throws SQLException {
         String sql = "INSERT INTO Classroom (classroomID, roomNr, building, capacity) VALUES (?, ?, ?, ?)";
         try (PreparedStatement classroomInfo = connection.prepareStatement(sql)) {
@@ -25,7 +27,7 @@ public class ClassroomEntity {
             classroomInfo.executeUpdate();
         }
     }
-
+    // Deletes a classroom record from the database based on the classroom ID
     public void deleteClassroom(int classroomID) throws SQLException {
         String sql = "DELETE FROM Classroom WHERE classroomID = ?";
         try (PreparedStatement classroomInfo = connection.prepareStatement(sql)) {
@@ -33,7 +35,7 @@ public class ClassroomEntity {
             classroomInfo.executeUpdate();
         }
     }
-
+    // Retrieves all classroom records from the database
     public List<Classroom> getAllClassrooms() throws SQLException {
         List<Classroom> classrooms = new ArrayList<>();
         String sql = "SELECT * FROM Classroom";
@@ -51,20 +53,22 @@ public class ClassroomEntity {
         }
         return classrooms;
     }
-
+    
+    // Represents a classroom record
     public static class Classroom {
         private final int classroomID;
         private final String roomNr;
         private final String building;
         private final int capacity;
 
+        // Initializes the Classroom with specified details
         public Classroom(int classroomID, String roomNr, String building, int capacity) {
             this.classroomID = classroomID;
             this.roomNr = roomNr;
             this.building = building;
             this.capacity = capacity;
         }
-
+        // Getters 
         public int getClassroomID() {
             return classroomID;
         }

@@ -10,11 +10,13 @@ import java.sql.ResultSet;
 public class HeldInRelationship {
 
     private Connection connection;
-
+    
+    // Initializes the HeldInRelationship with a database connection
     public HeldInRelationship(Connection connection) {
         this.connection = connection;
     }
 
+    // Adds a new HeldIn relationship record to the database
     public void addHeldIn(int examId, int classroomId) throws SQLException {
         String sql = "INSERT INTO HeldIn (examid, classroomid) VALUES (?, ?)";
         try (PreparedStatement heldInInfo = connection.prepareStatement(sql)) {
@@ -24,6 +26,7 @@ public class HeldInRelationship {
         }
     }
 
+    // Deletes a HeldIn relationship record from the database based on the exam ID and classroom ID
     public void deleteHeldIn(int examId, int classroomId) throws SQLException {
         String sql = "DELETE FROM HeldIn WHERE examid = ? AND classroomid = ?";
         try (PreparedStatement heldInInfo = connection.prepareStatement(sql)) {
@@ -32,7 +35,8 @@ public class HeldInRelationship {
             heldInInfo.executeUpdate();
         }
     }
-
+    
+    // Retrieves all HeldIn relationship records from the database
     public List<HeldIn> getAllHeldIn() throws SQLException {
         List<HeldIn> heldInList = new ArrayList<>();
         String sql = "SELECT * FROM HeldIn";
@@ -48,16 +52,18 @@ public class HeldInRelationship {
         }
         return heldInList;
     }
-
+    
+    // Represents a HeldIn relationship record
     public static class HeldIn {
         private final int examId;
         private final int classroomId;
 
+        // Initializes the HeldIn relationship with specified details
         public HeldIn(int examId, int classroomId) {
             this.examId = examId;
             this.classroomId = classroomId;
         }
-
+        // Getters
         public int getExamId() {
             return examId;
         }
