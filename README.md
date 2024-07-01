@@ -5,11 +5,9 @@
 This project, "Student Enrollment Management," was developed as part of the coursework for the subject "Introduction to Databases." The primary goal is to store and manage data about students enrolled in various exams at our institution. The project employs Java for the application logic and PostgreSQL for the database management, using Eclipse as the development environment and pgAdmin4 for database administration.
 
 ## Entity-Relationship (ER) Diagram
-![ER Diagram](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/bc584b63-5ebb-4e36-bef5-b91e9a0104e8)
-
+![ER Diagram](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/117b8587-b8bb-482c-ad60-c8c37f3205fe)
 ## Restructured version of Conceptual Schema
-![Restructuring Concteptual Schema](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/37f9c8d7-82c1-4d62-af4b-11826f6680dc)
-
+![Restructuring Concteptual Schema](https://github.com/RidvanPlluzhina/Student-Enrollment-System/assets/127865601/17068bb3-20b8-4d46-87ce-cc7dcdf308de)
 
 ## Textual Specification
 We want to store data about students enrolled in our institution for certain 
