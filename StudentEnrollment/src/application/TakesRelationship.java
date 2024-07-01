@@ -11,14 +11,14 @@ public class TakesRelationship {
 
     private Connection connection;
 
- // Constructor that initializes the connection object
+    // Constructor that initializes the connection object
     public TakesRelationship(Connection connection) {
         this.connection = connection;
     }
 
- // Method to add a relationship between a student and an exam in the Takes table
+    // Method to add a relationship between a student and an exam in the Takes table
     public void addTakes(int studentId, int examId) throws SQLException {
-        String sql = "INSERT INTO Takes (studentid, examid) VALUES (?, ?)";
+        String sql = "INSERT INTO Takes (studentId, examId) VALUES (?, ?)";
         try (PreparedStatement takesInfo = connection.prepareStatement(sql)) {
             takesInfo.setInt(1, studentId);
             takesInfo.setInt(2, examId);
@@ -26,9 +26,9 @@ public class TakesRelationship {
         }
     }
 
- // Method to delete a relationship between a student and an exam from the Takes table
+    // Method to delete a relationship between a student and an exam from the Takes table
     public void deleteTakes(int studentId, int examId) throws SQLException {
-        String sql = "DELETE FROM Takes WHERE studentid = ? AND examid = ?";
+        String sql = "DELETE FROM Takes WHERE studentId = ? AND examId = ?";
         try (PreparedStatement takesInfo = connection.prepareStatement(sql)) {
             takesInfo.setInt(1, studentId);
             takesInfo.setInt(2, examId);
@@ -36,7 +36,7 @@ public class TakesRelationship {
         }
     }
 
- // Method to retrieve all relationships from the Takes table
+    // Method to retrieve all relationships from the Takes table
     public List<Takes> getAllTakes() throws SQLException {
         List<Takes> takesList = new ArrayList<>();
         String sql = "SELECT * FROM Takes";
@@ -44,8 +44,8 @@ public class TakesRelationship {
              ResultSet rs = takesInfo.executeQuery()) {
             while (rs.next()) {
                 Takes takes = new Takes(
-                        rs.getInt("studentid"),
-                        rs.getInt("examid")
+                        rs.getInt("studentId"),
+                        rs.getInt("examId")
                 );
                 takesList.add(takes);
             }
@@ -53,7 +53,7 @@ public class TakesRelationship {
         return takesList;
     }
 
- // Inner class to represent a Takes relationship (student-exam pair)
+    // Inner class to represent a Takes relationship (student-exam pair)
     public static class Takes {
         private final int studentId;
         private final int examId;

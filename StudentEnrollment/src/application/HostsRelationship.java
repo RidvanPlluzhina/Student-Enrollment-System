@@ -15,27 +15,29 @@ public class HostsRelationship {
     public HostsRelationship(Connection connection) {
         this.connection = connection;
     }
-    
+
     // Adds a new Hosts relationship record to the database
-    public void addHosts(int classroomId, int subjectId) throws SQLException {
-        String sql = "INSERT INTO Hosts (classroomid, subjectid) VALUES (?, ?)";
+    public void addHosts(String roomNr, String building, int subjectId) throws SQLException {
+        String sql = "INSERT INTO Hosts (roomNr, building, subjectId) VALUES (?, ?, ?)";
         try (PreparedStatement hostsInfo = connection.prepareStatement(sql)) {
-            hostsInfo.setInt(1, classroomId);
-            hostsInfo.setInt(2, subjectId);
+            hostsInfo.setString(1, roomNr);
+            hostsInfo.setString(2, building);
+            hostsInfo.setInt(3, subjectId);
             hostsInfo.executeUpdate();
         }
     }
-    
-    // Deletes a Hosts relationship record from the database based on the classroom ID and subject ID
-    public void deleteHosts(int classroomId, int subjectId) throws SQLException {
-        String sql = "DELETE FROM Hosts WHERE classroomid = ? AND subjectid = ?";
+
+    // Deletes a Hosts relationship record from the database based on the room number, building, and subject ID
+    public void deleteHosts(String roomNr, String building, int subjectId) throws SQLException {
+        String sql = "DELETE FROM Hosts WHERE roomNr = ? AND building = ? AND subjectId = ?";
         try (PreparedStatement hostsInfo = connection.prepareStatement(sql)) {
-            hostsInfo.setInt(1, classroomId);
-            hostsInfo.setInt(2, subjectId);
+            hostsInfo.setString(1, roomNr);
+            hostsInfo.setString(2, building);
+            hostsInfo.setInt(3, subjectId);
             hostsInfo.executeUpdate();
         }
     }
-    
+
     // Retrieves all Hosts relationship records from the database
     public List<Hosts> getAllHosts() throws SQLException {
         List<Hosts> hostsList = new ArrayList<>();
@@ -44,8 +46,9 @@ public class HostsRelationship {
              ResultSet rs = hostsInfo.executeQuery()) {
             while (rs.next()) {
                 Hosts hosts = new Hosts(
-                        rs.getInt("classroomid"),
-                        rs.getInt("subjectid")
+                        rs.getString("roomNr"),
+                        rs.getString("building"),
+                        rs.getInt("subjectId")
                 );
                 hostsList.add(hosts);
             }
@@ -55,18 +58,24 @@ public class HostsRelationship {
 
     // Represents a Hosts relationship record
     public static class Hosts {
-        private final int classroomId;
+        private final String roomNr;
+        private final String building;
         private final int subjectId;
 
         // Initializes the Hosts relationship with specified details
-        public Hosts(int classroomId, int subjectId) {
-            this.classroomId = classroomId;
+        public Hosts(String roomNr, String building, int subjectId) {
+            this.roomNr = roomNr;
+            this.building = building;
             this.subjectId = subjectId;
         }
-        
+
         // Getters
-        public int getClassroomId() {
-            return classroomId;
+        public String getRoomNr() {
+            return roomNr;
+        }
+
+        public String getBuilding() {
+            return building;
         }
 
         public int getSubjectId() {

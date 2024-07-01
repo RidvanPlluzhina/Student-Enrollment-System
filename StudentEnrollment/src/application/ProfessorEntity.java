@@ -16,16 +16,15 @@ public class ProfessorEntity {
     }
 
     // Method for adding professor after INSERT button is pressed
-    public void addProfessor(int professorId, String firstName, String lastName, String email, String phoneNumbers, String department, String affiliation) throws SQLException {
-        String sql = "INSERT INTO Professor (professorId, firstName, lastName, email, phoneNumbers, department, affiliation) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public void addProfessor(int professorId, String firstName, String lastName, String email, String department, String affiliation) throws SQLException {
+        String sql = "INSERT INTO Professor (professorId, firstName, lastName, email, department, affiliation) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement professorInfo = connection.prepareStatement(sql)) {
             professorInfo.setInt(1, professorId);
             professorInfo.setString(2, firstName);
             professorInfo.setString(3, lastName);
             professorInfo.setString(4, email);
-            professorInfo.setString(5, phoneNumbers);
-            professorInfo.setString(6, department);
-            professorInfo.setString(7, affiliation);
+            professorInfo.setString(5, department);
+            professorInfo.setString(6, affiliation);
             professorInfo.executeUpdate();
         }
     }
@@ -51,7 +50,6 @@ public class ProfessorEntity {
                         rs.getString("firstName"),
                         rs.getString("lastName"),
                         rs.getString("email"),
-                        rs.getString("phoneNumbers"),
                         rs.getString("department"),
                         rs.getString("affiliation")
                 );
@@ -66,16 +64,14 @@ public class ProfessorEntity {
         private final String firstName;
         private final String lastName;
         private final String email;
-        private final String phoneNumbers;
         private final String department;
         private final String affiliation;
 
-        public Professor(int professorId, String firstName, String lastName, String email, String phoneNumbers, String department, String affiliation) {
+        public Professor(int professorId, String firstName, String lastName, String email, String department, String affiliation) {
             this.professorId = professorId;
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
-            this.phoneNumbers = phoneNumbers;
             this.department = department;
             this.affiliation = affiliation;
         }
@@ -94,10 +90,6 @@ public class ProfessorEntity {
 
         public String getEmail() {
             return email;
-        }
-
-        public String getPhoneNumbers() {
-            return phoneNumbers;
         }
 
         public String getDepartment() {

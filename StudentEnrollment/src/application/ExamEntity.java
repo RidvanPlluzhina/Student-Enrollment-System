@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +18,17 @@ public class ExamEntity {
     }
 
     // Method for adding exams after the INSERT button is pressed
-    public void addExam(int examId, String examDate) throws SQLException {
-        String sql = "INSERT INTO Exam (examId, examDate) VALUES (?, ?)";
+    public void addExam(int examId, String examDate, String examStartTime, String examEndTime, int professorId, int subjectId, String roomNr, String building) throws SQLException {
+        String sql = "INSERT INTO Exam (examId, examDate, examStartTime, examEndTime, professorId, subjectId, roomNr, building) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement examInfo = connection.prepareStatement(sql)) {
             examInfo.setInt(1, examId);
             examInfo.setDate(2, Date.valueOf(examDate));
+            examInfo.setTime(3, Time.valueOf(examStartTime + ":00"));
+            examInfo.setTime(4, Time.valueOf(examEndTime + ":00"));
+            examInfo.setInt(5, professorId);
+            examInfo.setInt(6, subjectId);
+            examInfo.setString(7, roomNr);
+            examInfo.setString(8, building);
             examInfo.executeUpdate();
         }
     }
@@ -43,7 +50,13 @@ public class ExamEntity {
             while (rs.next()) {
                 Exam exam = new Exam(
                         rs.getInt("examId"),
-                        rs.getDate("examDate").toString()
+                        rs.getDate("examDate").toString(),
+                        rs.getTime("examStartTime").toString(),
+                        rs.getTime("examEndTime").toString(),
+                        rs.getInt("professorId"),
+                        rs.getInt("subjectId"),
+                        rs.getString("roomNr"),
+                        rs.getString("building")
                 );
                 exams.add(exam);
             }
@@ -54,10 +67,22 @@ public class ExamEntity {
     public static class Exam {
         private final int examId;
         private final String examDate;
+        private final String examStartTime;
+        private final String examEndTime;
+        private final int professorId;
+        private final int subjectId;
+        private final String roomNr;
+        private final String building;
 
-        public Exam(int examId, String examDate) {
+        public Exam(int examId, String examDate, String examStartTime, String examEndTime, int professorId, int subjectId, String roomNr, String building) {
             this.examId = examId;
             this.examDate = examDate;
+            this.examStartTime = examStartTime;
+            this.examEndTime = examEndTime;
+            this.professorId = professorId;
+            this.subjectId = subjectId;
+            this.roomNr = roomNr;
+            this.building = building;
         }
 
         public int getExamId() {
@@ -66,6 +91,30 @@ public class ExamEntity {
 
         public String getExamDate() {
             return examDate;
+        }
+
+        public String getExamStartTime() {
+            return examStartTime;
+        }
+
+        public String getExamEndTime() {
+            return examEndTime;
+        }
+
+        public int getProfessorId() {
+            return professorId;
+        }
+
+        public int getSubjectId() {
+            return subjectId;
+        }
+
+        public String getRoomNr() {
+            return roomNr;
+        }
+
+        public String getBuilding() {
+            return building;
         }
     }
 }

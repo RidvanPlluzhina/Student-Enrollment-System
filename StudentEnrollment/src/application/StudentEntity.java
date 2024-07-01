@@ -14,10 +14,10 @@ public class StudentEntity {
     public StudentEntity(Connection connection) {
         this.connection = connection;
     }
-    
-    //Method for adding students after INSERT button pressed
+
+    // Method for adding students after INSERT button pressed
     public void addStudent(int studentId, String firstName, String lastName, String dateOfBirth, String level, String email, String work) throws SQLException {
-        String sql = "INSERT INTO Student (studentId, FirstName, LastName, DateOfBirth, Level, Email, Work) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Student (studentId, firstName, lastName, dateOfBirth, level, email, work) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement studentInfo = connection.prepareStatement(sql)) {
             studentInfo.setInt(1, studentId);
             studentInfo.setString(2, firstName);
@@ -40,8 +40,8 @@ public class StudentEntity {
             studentInfo.executeUpdate();
         }
     }
-    
-    //Method for deleting student after DELETE button is pressed
+
+    // Method for deleting student after DELETE button is pressed
     public void deleteStudent(int studentId) throws SQLException {
         String sql = "DELETE FROM Student WHERE studentId = ?";
         try (PreparedStatement studentInfo = connection.prepareStatement(sql)) {
@@ -58,12 +58,12 @@ public class StudentEntity {
             while (rs.next()) {
                 Student student = new Student(
                         rs.getInt("studentId"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getDate("DateOfBirth").toString(),
-                        rs.getString("Level"),
-                        rs.getString("Email"),
-                        rs.getString("Work")
+                        rs.getString("firstName"),
+                        rs.getString("lastName"),
+                        rs.getDate("dateOfBirth").toString(),
+                        rs.getString("level"),
+                        rs.getString("email"),
+                        rs.getString("work")
                 );
                 students.add(student);
             }

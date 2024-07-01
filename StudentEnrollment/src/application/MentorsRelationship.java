@@ -16,9 +16,9 @@ public class MentorsRelationship {
         this.connection = connection;
     }
 
- // Adds a new Mentors relationship record to the database
+    // Adds a new Mentors relationship record to the database
     public void addMentors(int professorId, int studentId) throws SQLException {
-        String sql = "INSERT INTO Mentors (professorid, studentid) VALUES (?, ?)";
+        String sql = "INSERT INTO Mentors (professorId, studentId) VALUES (?, ?)";
         try (PreparedStatement mentorsInfo = connection.prepareStatement(sql)) {
             mentorsInfo.setInt(1, professorId);
             mentorsInfo.setInt(2, studentId);
@@ -26,9 +26,9 @@ public class MentorsRelationship {
         }
     }
 
- // Deletes a Mentors relationship record from the database based on the professor ID and student ID
+    // Deletes a Mentors relationship record from the database based on the professor ID and student ID
     public void deleteMentors(int professorId, int studentId) throws SQLException {
-        String sql = "DELETE FROM Mentors WHERE professorid = ? AND studentid = ?";
+        String sql = "DELETE FROM Mentors WHERE professorId = ? AND studentId = ?";
         try (PreparedStatement mentorsInfo = connection.prepareStatement(sql)) {
             mentorsInfo.setInt(1, professorId);
             mentorsInfo.setInt(2, studentId);
@@ -44,8 +44,8 @@ public class MentorsRelationship {
              ResultSet rs = mentorsInfo.executeQuery()) {
             while (rs.next()) {
                 Mentors mentors = new Mentors(
-                        rs.getInt("professorid"),
-                        rs.getInt("studentid")
+                        rs.getInt("professorId"),
+                        rs.getInt("studentId")
                 );
                 mentorsList.add(mentors);
             }
@@ -53,7 +53,7 @@ public class MentorsRelationship {
         return mentorsList;
     }
 
- // Represents a Mentors relationship record
+    // Represents a Mentors relationship record
     public static class Mentors {
         private final int professorId;
         private final int studentId;
@@ -63,6 +63,7 @@ public class MentorsRelationship {
             this.professorId = professorId;
             this.studentId = studentId;
         }
+
         // Getters
         public int getProfessorId() {
             return professorId;
