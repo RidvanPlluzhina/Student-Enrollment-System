@@ -1,5 +1,5 @@
 # Student Enrollment Management (Ongoing Project)
-
+## NOT FINISHED YET 
 ## Overview
 
 This project, "Student Enrollment Management," was developed as part of the coursework for the subject "Introduction to Databases." The primary goal is to store and manage data about students enrolled in various exams at our institution. The project employs Java for the application logic and PostgreSQL for the database management, using Eclipse as the development environment and pgAdmin4 for database administration.
